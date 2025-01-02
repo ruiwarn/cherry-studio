@@ -529,7 +529,8 @@
     },
     "tray": {
       "quit": "終了",
-      "show_window": "ウィンドウを表示"
+      "show_window": "ウィンドウを表示",
+      "show_mini_window": "クイックアシスタント"
     },
     "words": {
       "knowledgeGraph": "ナレッジグラフ",

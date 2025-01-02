@@ -531,7 +531,8 @@
     },
     "tray": {
       "quit": "退出",
-      "show_window": "顯示視窗"
+      "show_window": "顯示視窗",
+      "show_mini_window": "快捷助手"
     },
     "words": {
       "knowledgeGraph": "知識圖譜",

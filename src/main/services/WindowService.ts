@@ -233,6 +233,38 @@ export class WindowService {
       this.createMainWindow()
     }
   }
+
+  public showMiniWindow() {
+    const theme = configManager.getTheme()
+    const isMac = process.platform === 'darwin'
+
+    const miniWindow = new BrowserWindow({
+      width: 450,
+      height: 600,
+      minWidth: 350,
+      show: true,
+      autoHideMenuBar: true,
+      transparent: isMac,
+      vibrancy: 'under-window',
+      visualEffectState: 'active',
+      titleBarStyle: 'customButtonsOnHover',
+      frame: false,
+      alwaysOnTop: true,
+      backgroundColor: isMac ? undefined : theme === 'dark' ? '#181818' : '#FFFFFF',
+      webPreferences: {
+        preload: join(__dirname, '../preload/index.js'),
+        sandbox: false,
+        webSecurity: false,
+        webviewTag: true
+      }
+    })
+
+    if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+      miniWindow.loadURL(process.env['ELECTRON_RENDERER_URL'] + '#/mini')
+    } else {
+      miniWindow.loadFile(join(__dirname, '../renderer/index.html') + '#/mini')
+    }
+  }
 }
 
 export const windowService = WindowService.getInstance()

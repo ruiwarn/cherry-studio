@@ -40,6 +40,10 @@ export class TrayService {
 
     const contextMenu = Menu.buildFromTemplate([
       {
+        label: trayLocale.show_mini_window,
+        click: () => windowService.showMiniWindow()
+      },
+      {
         label: trayLocale.show_window,
         click: () => windowService.showMainWindow()
       },
@@ -61,7 +65,7 @@ export class TrayService {
     })
 
     this.tray.on('click', () => {
-      windowService.showMainWindow()
+      windowService.showMiniWindow()
     })
   }
 

@@ -543,7 +543,8 @@
     },
     "tray": {
       "quit": "Quit",
-      "show_window": "Show Window"
+      "show_window": "Show Window",
+      "show_mini_window": "Quick Assistant"
     },
     "words": {
       "knowledgeGraph": "Knowledge Graph",
