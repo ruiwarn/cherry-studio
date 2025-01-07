@@ -7,7 +7,11 @@ import styled from 'styled-components'
 
 const { Paragraph } = Typography
 
-const HomeWindow: FC = () => {
+interface HomeWindowProps {
+  setRoute: (route: 'home' | 'chat' | 'translate' | 'summary' | 'explanation') => void
+}
+
+const HomeWindow: FC<HomeWindowProps> = ({ setRoute }) => {
   const [clipboardContent, setClipboardContent] = useState('')
   const { theme } = useTheme()
 
@@ -28,27 +32,37 @@ const HomeWindow: FC = () => {
       icon: <MessageOutlined style={{ fontSize: '24px', color: '#fff' }} />,
       title: 'AI 对话',
       description: '与 AI 进行智能对话，获取帮助和建议',
-      gradient: 'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)'
+      gradient: 'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)',
+      onClick: () => setRoute('chat')
     },
     {
       icon: <TranslationOutlined style={{ fontSize: '24px', color: '#fff' }} />,
       title: '文本翻译',
       description: '快速翻译各种语言文本',
-      gradient: 'linear-gradient(135deg, #22c55e 0%, #15803d 100%)'
+      gradient: 'linear-gradient(135deg, #22c55e 0%, #15803d 100%)',
+      onClick: () => setRoute('translate')
     },
     {
       icon: <FileTextOutlined style={{ fontSize: '24px', color: '#fff' }} />,
       title: '内容总结',
       description: '自动生成文本内容的简要总结',
-      gradient: 'linear-gradient(135deg, #f97316 0%, #c2410c 100%)'
+      gradient: 'linear-gradient(135deg, #f97316 0%, #c2410c 100%)',
+      onClick: () => setRoute('summary')
     },
     {
       icon: <BulbOutlined style={{ fontSize: '24px', color: '#fff' }} />,
       title: '解释说明',
       description: '获取代码或专业术语的详细解释',
-      gradient: 'linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%)'
+      gradient: 'linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%)',
+      onClick: () => setRoute('explanation')
     }
   ]
+
+  useEffect(() => {
+    window.electron.ipcRenderer.on('hide-mini-window', () => {
+      setRoute('home')
+    })
+  }, [setRoute])
 
   return (
     <Container>
@@ -62,7 +76,7 @@ const HomeWindow: FC = () => {
         <Row gutter={[8, 8]}>
           {features.map((feature, index) => (
             <Col span={12} key={index}>
-              <FeatureCard gradient={feature.gradient}>
+              <FeatureCard gradient={feature.gradient} onClick={feature.onClick}>
                 <IconWrapper>{feature.icon}</IconWrapper>
                 <CardTitle>{feature.title}</CardTitle>
                 <CardDescription>{feature.description}</CardDescription>
@@ -78,6 +92,7 @@ const HomeWindow: FC = () => {
 const Container = styled.div`
   padding: 16px;
   height: 100vh;
+  width: 100vw;
   display: flex;
   flex-direction: column;
   gap: 16px;

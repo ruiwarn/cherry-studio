@@ -13,6 +13,7 @@ import { configManager } from './ConfigManager'
 export class WindowService {
   private static instance: WindowService | null = null
   private mainWindow: BrowserWindow | null = null
+  private miniWindow: BrowserWindow | null = null
   private isQuitting: boolean = false
   private wasFullScreen: boolean = false
 
@@ -235,21 +236,33 @@ export class WindowService {
   }
 
   public showMiniWindow() {
+    if (this.miniWindow && !this.miniWindow.isDestroyed()) {
+      if (this.miniWindow.isMinimized()) {
+        this.miniWindow.restore()
+      }
+      this.miniWindow.show()
+      this.miniWindow.focus()
+      return
+    }
+
     const theme = configManager.getTheme()
     const isMac = process.platform === 'darwin'
 
-    const miniWindow = new BrowserWindow({
-      width: 450,
-      height: 600,
+    this.miniWindow = new BrowserWindow({
+      width: 400,
+      height: 520,
       minWidth: 350,
       show: true,
       autoHideMenuBar: true,
       transparent: isMac,
       vibrancy: 'under-window',
-      visualEffectState: 'active',
-      titleBarStyle: 'customButtonsOnHover',
+      visualEffectState: 'followWindow',
+      titleBarStyle: 'hidden',
       frame: false,
       alwaysOnTop: true,
+      maximizable: false,
+      minimizable: false,
+      closable: false,
       backgroundColor: isMac ? undefined : theme === 'dark' ? '#181818' : '#FFFFFF',
       webPreferences: {
         preload: join(__dirname, '../preload/index.js'),
@@ -259,10 +272,30 @@ export class WindowService {
       }
     })
 
+    this.miniWindow.on('blur', () => {
+      this.miniWindow?.hide()
+    })
+
+    this.miniWindow.on('close', (event) => {
+      if (this.isQuitting) {
+        return
+      }
+      event.preventDefault()
+      this.miniWindow?.hide()
+    })
+
+    this.miniWindow.on('closed', () => {
+      this.miniWindow = null
+    })
+
+    this.miniWindow.on('hide', () => {
+      this.miniWindow?.webContents.send('hide-mini-window')
+    })
+
     if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-      miniWindow.loadURL(process.env['ELECTRON_RENDERER_URL'] + '#/mini')
+      this.miniWindow.loadURL(process.env['ELECTRON_RENDERER_URL'] + '#/mini')
     } else {
-      miniWindow.loadFile(join(__dirname, '../renderer/index.html') + '#/mini')
+      this.miniWindow.loadFile(join(__dirname, '../renderer/index.html') + '#/mini')
     }
   }
 }
