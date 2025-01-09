@@ -2,6 +2,7 @@ import '@renderer/databases'
 
 import store, { persistor } from '@renderer/store'
 import { useState } from 'react'
+import { useHotkeys } from 'react-hotkeys-hook'
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/integration/react'
 
@@ -14,6 +15,14 @@ import { ThemeMode } from '../types'
 
 function MiniWindow(): JSX.Element {
   const [route, setRoute] = useState<'home' | 'chat' | 'translate' | 'summary' | 'explanation'>('home')
+
+  useHotkeys('esc', () => {
+    if (route === 'home') {
+      window.close()
+    } else {
+      setRoute('home')
+    }
+  })
 
   return (
     <Provider store={store}>

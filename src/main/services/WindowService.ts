@@ -249,21 +249,19 @@ export class WindowService {
     const isMac = process.platform === 'darwin'
 
     this.miniWindow = new BrowserWindow({
-      width: 400,
-      height: 520,
-      minWidth: 350,
+      width: 650,
+      height: 320,
       show: true,
       autoHideMenuBar: true,
       transparent: isMac,
       vibrancy: 'under-window',
       visualEffectState: 'followWindow',
-      titleBarStyle: 'hidden',
+      center: true,
       frame: false,
       alwaysOnTop: true,
-      maximizable: false,
-      minimizable: false,
-      closable: false,
       backgroundColor: isMac ? undefined : theme === 'dark' ? '#181818' : '#FFFFFF',
+      resizable: false,
+      useContentSize: true,
       webPreferences: {
         preload: join(__dirname, '../preload/index.js'),
         sandbox: false,
@@ -273,7 +271,7 @@ export class WindowService {
     })
 
     this.miniWindow.on('blur', () => {
-      this.miniWindow?.hide()
+      // this.miniWindow?.hide()
     })
 
     this.miniWindow.on('close', (event) => {
